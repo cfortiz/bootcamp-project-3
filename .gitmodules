@@ -1,3 +1,0 @@
-[submodule "dataset"]
-	path = dataset
-	url = git@github.com:cfortiz/openneuro-moba-eeg-dataset.git
