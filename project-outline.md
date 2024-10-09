@@ -58,3 +58,5 @@ Global happiness and well-being have become key indicators for measuring the qua
 	•	A set of interactive visualizations that provide a deep understanding of global happiness patterns and trends.
 	•	Insights into which factors contribute most to happiness across different countries and how these have changed over time.
 	•	An easy-to-use dashboard where users can explore the data and customize their view to suit their specific interests.
+
+8. Data URL: https://worldhappiness.report/data/
