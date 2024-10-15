@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit as st # used for the dashboard
 import pandas as pd
 from pymongo import MongoClient
 import folium

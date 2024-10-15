@@ -7,6 +7,11 @@ import folium
 from streamlit_folium import st_folium
 from folium.plugins import MarkerCluster
 
+# SET VARIABLES
+Happiness_Score = df['Life Ladder']
+
+
+
 # MONGO CLIENT
 def get_mongo_client():
     mongo = MongoClient("mongodb://localhost:27017/")
@@ -75,6 +80,13 @@ def main():
         # Create dropdowns for countries and years
         selected_countries = st.multiselect('Select Countries', df['Country name'].unique(), default=df['Country name'].unique())
         selected_years = st.multiselect('Select Years', df['year'].unique(), default=df['year'].max())  # Default to the latest year
+        selected_metric = st.selectbox(
+            "Select metric:",
+            df[''].unique(),
+
+            index=None,
+
+        )
 
         # Filter DataFrame based on the selected countries and years
         filtered_df = df[(df['Country name'].isin(selected_countries)) & (df['year'].isin(selected_years))]
