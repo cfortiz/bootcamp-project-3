@@ -1,13 +1,13 @@
 # -------------------------------------------------- libraries and dependencies -------------------------------------------------- #
-import streamlit as st
-import pandas as pd
-import numpy as np
-import plotly.express as px
 import folium
-import plotly.graph_objects as go
-from streamlit_folium import st_folium
 from folium.plugins import MarkerCluster
+import numpy as np
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
 from pymongo import MongoClient
+import streamlit as st
+from streamlit_folium import st_folium
 
 # -------------------------------------------------- STREAMLIT PAGE LAYOUR -------------------------------------------------- #
 # st.set_page_config(layout='wide')
