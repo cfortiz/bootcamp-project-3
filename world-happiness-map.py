@@ -9,6 +9,9 @@ from streamlit_folium import st_folium
 from folium.plugins import MarkerCluster
 from pymongo import MongoClient
 
+# -------------------------------------------------- STREAMLIT PAGE LAYOUR -------------------------------------------------- #
+# st.set_page_config(layout='wide')
+
 # -------------------------------------------------- DEFINE: convert mongodb fig 2024 to pandas df and add country coordinates -------------------------------------------------- #
 def get_mongo_client():
     mongo = MongoClient('mongodb://localhost:27017/')
@@ -85,56 +88,64 @@ def main():
         coordinates_df = load_country_coordinates('back-end/country_coordinates.csv')
         merged_fig_df = pd.merge(fig_df, coordinates_df, on='Country name', how='left')
 
-# -------------------------------------------------- TAB 1: WORLD MAP (map does not use filtered data)  -------------------------------------------------- #
-        with tab1:
-            col1, col2 = st.columns([1,3])
-            # Dropdown to select country
-            country_selection = st.selectbox("Select a country to see 2024 metrics:", country_options)
-            # Filter data for the selected country
-            country_fig_data = merged_fig_df[merged_fig_df['Country name'] == country_selection]
+# -------------------------------------------------- TAB 1: WORLD MAP (map does not change based on filtered data)  -------------------------------------------------- #
+    with tab1:
+        
+        # Dropdown to select country
+        country_selection = st.selectbox("Select a country to see 2024 metrics:", country_options)
+        # Filter data for the selected country
+        country_fig_data = merged_fig_df[merged_fig_df['Country name'] == country_selection]
+        st.header(f'2024 {country_selection} Metrics')
 
-            if not country_fig_data.empty:
-                # Display country-specific data
-                with col1:
-                    st.subheader(f'2024 {country_selection} Metrics')
-                    st.metric("Happiness Score", round(country_fig_data['Ladder score'].values[0], 2))
-                    st.metric('Log GDP per Capita', round(country_fig_data['Explained by: Log GDP per capita'].values[0], 2))
-                    st.metric('Healthy life expectancy', round(country_fig_data['Explained by: Healthy life expectancy'].values[0], 2))
-                    st.metric('Freedom to make life choices', round(country_fig_data['Explained by: Freedom to make life choices'].values[0], 2))
-                    st.metric('Generosity', round(country_fig_data['Explained by: Generosity'].values[0], 2))
-                    st.metric('Perceptions of corruption', round(country_fig_data['Explained by: Perceptions of corruption'].values[0], 2))
-                    st.metric('Dystopia + residual', round(country_fig_data['Dystopia + residual'].values[0], 2))
-                    # add more metrics
-                
-                # Display Folium map with zoom
-                fig_map = folium.Map(location=[20,0], zoom_start=4)
+        col1, col2 = st.columns(2)
 
-                # Choropleth Layer
-                folium.Choropleth(
-                    geo_data='back-end/countries.geo.json',
-                    name='choropleth',
-                    data=merged_fig_df,
-                    columns=['Country name', 'Ladder score'],
-                    key_on='feature.properties.name',
-                    fill_color='YlGnBu',
-                    fill_opacity=0.7,
-                    line_opacity=0.2,
-                    legend_name='World Happiness Score',
-                ).add_to(fig_map)
+        if not country_fig_data.empty:
+            # Display country-specific data
+            
+            col1.metric("Happiness Score", round(country_fig_data['Ladder score'].values[0], 2))
+            col1.metric('Log GDP per Capita', round(country_fig_data['Explained by: Log GDP per capita'].values[0], 2))
+            col1.metric('Healthy Life Expectancy', round(country_fig_data['Explained by: Healthy life expectancy'].values[0], 2))
+            col2.metric('Freedom to make Life Choices', round(country_fig_data['Explained by: Freedom to make life choices'].values[0], 2))
+            col2.metric('Generosity', round(country_fig_data['Explained by: Generosity'].values[0], 2))
+            col2.metric('Perceptions of Corruption', round(country_fig_data['Explained by: Perceptions of corruption'].values[0], 2))  
+        fig_map = folium.Map(location=[20,0], zoom_start=4)
 
-                # Marker Cluster Layer
-                marker_cluster = MarkerCluster().add_to(fig_map)        
-                for _, row in merged_fig_df.iterrows():
-                    if pd.notnull(row['latitude']) and pd.notnull(row['longitude']):
-                        folium.Marker(
-                            location=[row['latitude'], row['longitude']],
-                            tooltip=f"{row['Country name']}: {row['Ladder score']}" ,
-                            # popup=
-                            icon=folium.Icon(color='blue', icon='info-sign'),
-                        ).add_to(marker_cluster)
+        # Choropleth Layer
+        folium.Choropleth(
+            geo_data='back-end/countries.geo.json',
+            name='choropleth',
+            data=merged_fig_df,
+            columns=['Country name', 'Ladder score'],
+            key_on='feature.properties.name',
+            fill_color='YlGnBu',
+            fill_opacity=0.7,
+            line_opacity=0.2,
+            legend_name='World Happiness Score',
+        ).add_to(fig_map)
 
-                # Display Folium map in Streamlit
-                st_folium(fig_map, width=700, height=500)
+        # Marker Cluster Layer
+        marker_cluster = MarkerCluster().add_to(fig_map)        
+        for _, row in merged_fig_df.iterrows():
+            if pd.notnull(row['latitude']) and pd.notnull(row['longitude']):
+                folium.Marker(
+                    location=[row['latitude'], row['longitude']],
+                    tooltip=f"{row['Country name']}: {row['Ladder score']}" ,
+                    icon=folium.Icon(color='blue', icon='info-sign'),
+                ).add_to(marker_cluster)
+
+        # Display Folium map in Streamlit
+        st_folium(fig_map, width=800, height=500)       
+
+# -------------------------------------------------- TAB 2: COMPARING COUNTRIES  -------------------------------------------------- #
+        with tab2:
+            col1, col2 = st.columns(2)
+
+    with tab2:
+        
+        # Dropdown to select year
+        country_selection
+        year_selection = st.selectbox("Select a year to compare metrics:", year_options)
+        
 
 
 
