@@ -50,7 +50,7 @@ def mongo_data_to_table_df(table_data):
     return table_df
 
 def load_country_coordinates(csv_file):
-    return pd.read_csv('back-end/country_coordinates.csv')
+    return pd.read_csv('back-end/resources/country_coordinates.csv')
 
 # -------------------------------------------------- FETCH: STREAMLIT MAP -------------------------------------------------- #
 def main():
@@ -89,7 +89,7 @@ def main():
         fig_df = mongo_data_to_fig_df(fig_data)
         table_df = mongo_data_to_table_df(table_data)
         # Load coordinates csv into a DataFrame and merge with the fig_df to create the 2024 Map
-        coordinates_df = load_country_coordinates('back-end/country_coordinates.csv')
+        coordinates_df = load_country_coordinates('back-end/resources/country_coordinates.csv')
         merged_fig_df = pd.merge(fig_df, coordinates_df, on='Country name', how='left')
 
 # -------------------------------------------------- TAB 1: WORLD MAP (map does not change based on filtered data)  -------------------------------------------------- #
@@ -116,7 +116,7 @@ def main():
 
         # Choropleth Layer
         folium.Choropleth(
-            geo_data='back-end/countries.geo.json',
+            geo_data='back-end/resources/countries.geo.json',
             name='choropleth',
             data=merged_fig_df,
             columns=['Country name', 'Ladder score'],
