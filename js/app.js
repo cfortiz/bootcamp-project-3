@@ -1,5 +1,7 @@
+// Initialize a Leaflet map
 const map = L.map('map').setView([20, 0], 2);
 
+// Add a tile layer to the map using OpenStreetMap tiles
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
 }).addTo(map);
@@ -52,8 +54,8 @@ async function fetchData() {
         updateInterval = setInterval(() => {
             const year = years[currentYearIndex];
             loadMapForYear(countryData, geoJsonData, year);
-            legend.textContent = `Year: ${year}`; // Update legend text
-            currentYearIndex = (currentYearIndex + 1) % years.length; // Cycle through years
+            legend.textContent = `Year: ${year}`;
+            currentYearIndex = (currentYearIndex + 1) % years.length;
         }, 200);
 
         // Show stop icon, hide play icon
@@ -80,7 +82,7 @@ async function fetchData() {
     });
 
     // Start fetching data and set up initial updates
-    startUpdates(); // Start updates initially
+    startUpdates();
 }
 
 // Function to load the map for a specific year
@@ -93,7 +95,7 @@ function loadMapForYear(countryData, geoJsonData, year) {
 
     const yearData = countryData[year];
     const color = d3.scaleLinear()
-        .domain([1, 10]) // Adjust based on your Life Ladder range
+        .domain([1, 10])
         .range(["red", "green"]);
 
     geoJsonData.features.forEach(feature => {
@@ -120,7 +122,8 @@ function loadMapForYear(countryData, geoJsonData, year) {
                 direction: 'auto'
             });
 
-            geoJsonLayer.addTo(map); // Add the layer to the map
+            // Add the layer to the map
+            geoJsonLayer.addTo(map);
         }
     });
 }
