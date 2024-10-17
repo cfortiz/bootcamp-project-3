@@ -10,7 +10,7 @@ from folium.plugins import MarkerCluster
 from pymongo import MongoClient
 
 # -------------------------------------------------- STREAMLIT PAGE LAYOUR -------------------------------------------------- #
-# st.set_page_config(layout='wide')
+st.set_page_config(layout='wide')
 
 # -------------------------------------------------- DEFINE: convert mongodb fig 2024 to pandas df and add country coordinates -------------------------------------------------- #
 def get_mongo_client():
@@ -57,7 +57,7 @@ def main():
     # Title of Page
     st.title("World Happiness Dashboard")
     # Tabs listed under the dashboard
-    tab1, tab2, tab3 = st.tabs(["2024 World Map", "Compare Countries by Year", "Data Tables"])
+    tab1, tab2 = st.tabs(["2024 World Map", "Compare Countries by Year"])
 
     # Filter options for year and country
     year_options = ['2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014']
@@ -74,6 +74,10 @@ def main():
                        'Saudi Arabia','Senegal','Serbia','Sierra Leone','Singapore','Slovakia','Slovenia','Somalia','Somaliland region','South Africa','South Korea','South Sudan','Spain','Sri Lanka','State of Palestine','Sudan','Suriname','Sweden','Switzerland','Syria',
                        'Taiwan Province of China','Tajikistan','Tanzania','Thailand','Togo','Trinidad and Tobago','Tunisia','Turkmenistan','Türkiye',
                        'Uganda','Ukraine','United Arab Emirates','United Kingdom','United States','Uruguay','Uzbekistan','Venezuela','Vietnam','Yemen','Zambia','Zimbabwe']
+    metric_options = ['Life Ladder','Log GDP per capita',
+                      'Social support','Healthy life expectancy at birth',
+                      'Freedom to make life choices','Generosity',
+                      'Perceptions of corruption','Positive affect','Negative affect']
 
 
     # Fetch data from both collections
@@ -97,18 +101,18 @@ def main():
         country_fig_data = merged_fig_df[merged_fig_df['Country name'] == country_selection]
         st.header(f'2024 {country_selection} Metrics')
 
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
 
         if not country_fig_data.empty:
             # Display country-specific data
             
             col1.metric("Happiness Score", round(country_fig_data['Ladder score'].values[0], 2))
             col1.metric('Log GDP per Capita', round(country_fig_data['Explained by: Log GDP per capita'].values[0], 2))
-            col1.metric('Healthy Life Expectancy', round(country_fig_data['Explained by: Healthy life expectancy'].values[0], 2))
+            col2.metric('Healthy Life Expectancy', round(country_fig_data['Explained by: Healthy life expectancy'].values[0], 2))
             col2.metric('Freedom to make Life Choices', round(country_fig_data['Explained by: Freedom to make life choices'].values[0], 2))
-            col2.metric('Generosity', round(country_fig_data['Explained by: Generosity'].values[0], 2))
-            col2.metric('Perceptions of Corruption', round(country_fig_data['Explained by: Perceptions of corruption'].values[0], 2))  
-        fig_map = folium.Map(location=[20,0], zoom_start=4)
+            col3.metric('Generosity', round(country_fig_data['Explained by: Generosity'].values[0], 2))
+            col3.metric('Perceptions of Corruption', round(country_fig_data['Explained by: Perceptions of corruption'].values[0], 2))  
+        fig_map = folium.Map(location=[20,0], zoom_start=2)
 
         # Choropleth Layer
         folium.Choropleth(
@@ -134,19 +138,43 @@ def main():
                 ).add_to(marker_cluster)
 
         # Display Folium map in Streamlit
-        st_folium(fig_map, width=800, height=500)       
+        st_folium(fig_map, width=1000, height=500)       
 
 # -------------------------------------------------- TAB 2: COMPARING COUNTRIES  -------------------------------------------------- #
-        with tab2:
-            col1, col2 = st.columns(2)
 
     with tab2:
         
         # Dropdown to select year
         country_selection
-        year_selection = st.selectbox("Select a year to compare metrics:", year_options)
-        
+        metric_selection = st.selectbox("Select a metric to see year to year:", metric_options)
+        year_selection = st.slider("Select a range of years:", 2014, 2023, (2018,2022))
+        st.write("Year Range:", year_selection)
 
+        # Filtered data based on Country, Metric, Year Range selection
+        filtered_table_df = table_df[
+            (table_df['Country name'] == country_selection) &
+            (table_df['year'] >= year_selection[0]) &
+            (table_df['year'] <= year_selection[1])
+        ]
+
+        # Create Line Chart
+        if not filtered_table_df.empty:
+            fig = px.line(filtered_table_df,
+                          x='year',
+                          y=metric_selection,
+                          title=f'{metric_selection} over time for {country_selection}')
+            
+            # Update layout
+            fig.update_layout(
+                xaxis = dict(
+                    tickmode = 'linear',
+                    tick0 = filtered_table_df['year'].min(),
+                    dtick = 1
+                )
+            )
+            
+            # Display the line chart in Streamlit
+            st.plotly_chart(fig)
 
 
 
