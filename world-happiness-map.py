@@ -24,39 +24,43 @@ def get_mongo_client():
     return mongo
 
 
+def get_data_from_mongo(collection_name):
+    """Fetch all data from a mongo collection
+    
+    Args:
+        collection: String name of the collection
+    
+    Returns:
+        A list of all documents in the mongo worldHappiness db collection passed
+        as an argument.
+    
+    """
+    with get_mongo_client() as mongo:
+        mongo = get_mongo_client()
+        db = mongo.worldHappiness
+        collection = db[collection_name]
+        return list(collection.find({}, {'_id': 0}))
+
+
 def get_fig_data_from_mongodb():
     """Fetch data from the mongo 'fig' collection"""
-    mongo = get_mongo_client()
-    db = mongo['worldHappiness']
-    fig_collection = db['fig']
-    fig_data = list(fig_collection.find())
-    mongo.close()
-    return fig_data
+    return get_data_from_mongo(collection_name='fig')
 
 
 def get_table_data_from_mongodb():
     """Fetch data from the mongo 'table' collection"""
-    mongo = get_mongo_client()
-    db = mongo['worldHappiness']
-    table_collection = db['table']
-    table_data = list(table_collection.find())
-    mongo.close()
-    return table_data
+    return get_data_from_mongo(collection_name='table')
 
 
 def mongo_data_to_fig_df(fig_data):
     """Convert MongoDB fig data to pandas DataFrame"""
     fig_df = pd.DataFrame(fig_data)
-    if '_id' in fig_df.columns:
-        fig_df = fig_df.drop('_id', axis=1)
     return fig_df
 
 
 def mongo_data_to_table_df(table_data):
     """Convert MongoDB table data to pandas DataFrame"""
     table_df = pd.DataFrame(table_data)
-    if '_id' in table_df.columns:
-        table_df = table_df.drop('_id', axis=1)
     return table_df
 
 
@@ -106,25 +110,18 @@ def main():
 
     # Filter options for year and country
     year_options = get_year_options()
-    # country_options = ['Afghanistan','Albania','Algeria','Angola','Argentina','Armenia','Australia','Austria','Azerbaijan',
-    #                    'Bahrain','Bangladesh','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Bulgaria','Burkina Faso','Burundi',
-    #                    'Cambodia','Cameroon','Canada','Central African Republic','Chad','Chile','China','Colombia','Comoros','Congo (Brazzaville)','Congo (Kinshasa)','Costa Rica','Croatia','Cuba','Cyprus','Czechia',
-    #                    'Denmark','Djibouti','Dominican Republic','Ecuador','Egypt','El Salvador','Estonia','Eswatini','Ethiopia',
-    #                    'Finland','France','Gabon','Gambia',	'Georgia','Germany','Ghana','Greece','Guatemala','Guinea','Guyana',
-    #                    'Haiti','Honduras','Hong Kong S.A.R. of China','Hungary','Iceland','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy','Ivory Coast',
-    #                    'Jamaica','Japan','Jordan','Kazakhstan','Kenya','Kosovo','Kuwait','Kyrgyzstan','Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Lithuania','Luxembourg',
-    #                    'Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Mauritania','Mauritius','Mexico','Moldova','Mongolia','Montenegro','Morocco','Mozambique','Myanmar',
-    #                    'Namibia','Nepal','Netherlands','New Zealand','Nicaragua','Niger','Nigeria','North Macedonia','Norway','Oman',
-    #                    'Pakistan','Panama','Paraguay','Peru','Philippines','Poland','Portugal','Qatar','Romania','Russia','Rwanda',
-    #                    'Saudi Arabia','Senegal','Serbia','Sierra Leone','Singapore','Slovakia','Slovenia','Somalia','Somaliland region','South Africa','South Korea','South Sudan','Spain','Sri Lanka','State of Palestine','Sudan','Suriname','Sweden','Switzerland','Syria',
-    #                    'Taiwan Province of China','Tajikistan','Tanzania','Thailand','Togo','Trinidad and Tobago','Tunisia','Turkmenistan','Türkiye',
-    #                    'Uganda','Ukraine','United Arab Emirates','United Kingdom','United States','Uruguay','Uzbekistan','Venezuela','Vietnam','Yemen','Zambia','Zimbabwe']
     country_options = get_country_options()
-    metric_options = ['Life Ladder','Log GDP per capita',
-                      'Social support','Healthy life expectancy at birth',
-                      'Freedom to make life choices','Generosity',
-                      'Perceptions of corruption','Positive affect','Negative affect']
-
+    metric_options = [
+        'Life Ladder',
+        'Log GDP per capita',
+        'Social support',
+        'Healthy life expectancy at birth',
+        'Freedom to make life choices',
+        'Generosity',
+        'Perceptions of corruption',
+        'Positive affect',
+        'Negative affect',
+    ]
 
     # Fetch data from both collections
     fig_data = get_fig_data_from_mongodb()
