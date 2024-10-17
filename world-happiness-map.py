@@ -26,7 +26,7 @@ def get_mongo_client():
 
 
 def get_data_from_mongo(collection_name):
-    """Fetch all data from a mongo collection
+    """Fetch all data from a collection in worldHappiness mongo db
     
     Args:
         collection: String name of the collection
