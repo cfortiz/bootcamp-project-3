@@ -1,24 +1,29 @@
-# -------------------------------------------------- libraries and dependencies -------------------------------------------------- #
-import streamlit as st
-import pandas as pd
-import numpy as np
-import plotly.express as px
 import folium
-import plotly.graph_objects as go
-from streamlit_folium import st_folium
 from folium.plugins import MarkerCluster
+import numpy as np
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
 from pymongo import MongoClient
+import streamlit as st
+from streamlit_folium import st_folium
 
-# -------------------------------------------------- STREAMLIT PAGE LAYOUR -------------------------------------------------- #
+
+MIN_YEAR_OPTION = 2014
+MAX_YEAR_OPTION = 2023
+
+# Configure the streamlit page layout
 st.set_page_config(layout='wide')
 
-# -------------------------------------------------- DEFINE: convert mongodb fig 2024 to pandas df and add country coordinates -------------------------------------------------- #
+
 def get_mongo_client():
+    """Connect to MongoDB using a pymongoMongoClient"""
     mongo = MongoClient('mongodb://localhost:27017/')
     return mongo
 
-# Fetch data from 'fig' collection
+
 def get_fig_data_from_mongodb():
+    """Fetch data from the mongo 'fig' collection"""
     mongo = get_mongo_client()
     db = mongo['worldHappiness']
     fig_collection = db['fig']
@@ -26,8 +31,9 @@ def get_fig_data_from_mongodb():
     mongo.close()
     return fig_data
 
-# Fetch data from 'table' collection
+
 def get_table_data_from_mongodb():
+    """Fetch data from the mongo 'table' collection"""
     mongo = get_mongo_client()
     db = mongo['worldHappiness']
     table_collection = db['table']
@@ -35,32 +41,46 @@ def get_table_data_from_mongodb():
     mongo.close()
     return table_data
 
-# Convert MongoDB fig data to pandas DataFrame
+
 def mongo_data_to_fig_df(fig_data):
+    """Convert MongoDB fig data to pandas DataFrame"""
     fig_df = pd.DataFrame(fig_data)
     if '_id' in fig_df.columns:
         fig_df = fig_df.drop('_id', axis=1)
     return fig_df
 
-# Convert MongoDB table data to pandas DataFrame
+
 def mongo_data_to_table_df(table_data):
+    """Convert MongoDB table data to pandas DataFrame"""
     table_df = pd.DataFrame(table_data)
     if '_id' in table_df.columns:
         table_df = table_df.drop('_id', axis=1)
     return table_df
 
+
 def load_country_coordinates(csv_file):
+    """Load country coordinates from CSV file"""
     return pd.read_csv('back-end/resources/country_coordinates.csv')
 
-# -------------------------------------------------- FETCH: STREAMLIT MAP -------------------------------------------------- #
+
+def get_year_options():
+    """Get the list of all year option values
+    
+    Returns:
+        A list with all year option values as strings in reverse chronological
+        order.
+    
+    """
+    return list(map(str, reversed(range(MIN_YEAR_OPTION, MAX_YEAR_OPTION+1))))
+
+
 def main():
-    # Title of Page
+    # Set page title, and add dashboard tabs
     st.title("World Happiness Dashboard")
-    # Tabs listed under the dashboard
     tab1, tab2 = st.tabs(["2024 World Map", "Compare Countries by Year"])
 
     # Filter options for year and country
-    year_options = ['2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014']
+    year_options = get_year_options()
     country_options = ['Afghanistan','Albania','Algeria','Angola','Argentina','Armenia','Australia','Austria','Azerbaijan',
                        'Bahrain','Bangladesh','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Bulgaria','Burkina Faso','Burundi',
                        'Cambodia','Cameroon','Canada','Central African Republic','Chad','Chile','China','Colombia','Comoros','Congo (Brazzaville)','Congo (Kinshasa)','Costa Rica','Croatia','Cuba','Cyprus','Czechia',
