@@ -46,23 +46,23 @@ choices, generosity, and perceptions of corruption.
 * **Dataset Source**: [World Happiness Report Appendices & Data](https://worldhappiness.report/data/)
 * **Content**: The dataset contains mre than 2500 records, with the following
   variables providing a comprehensive view of happiness level:
-  - **Life Ladder:** A subjective measure where individuals rate
+  * **Life Ladder:** A subjective measure where individuals rate
     their current lives on a scale from 0 to 10, reflecting personal
     life satisfaction and well-being
-  - **GDP per capita:** Measures the average income per capita,
+  * **GDP per capita:** Measures the average income per capita,
     reflecting the economic resources available to individuals.
-  - **Social support:** Assesses the presence of supportive relationships
+  * **Social support:** Assesses the presence of supportive relationships
     and community ties that individuals can rely on in times of need. 
-  - **Healthy life expectancy at birth:** Indicates the average number
+  * **Healthy life expectancy at birth:** Indicates the average number
     of years people can expect to live in good health, reflecting overall
     health and healthcare quality.
-  - **Freedom to make life choices:** Evaluates the extent to which individuals
+  * **Freedom to make life choices:** Evaluates the extent to which individuals
     feel they have the autonomy to make choices about their own lives.
-  - **Generosity:** Looks at the level of charitable donations and volunteerism,
+  * **Generosity:** Looks at the level of charitable donations and volunteerism,
     reflecting a society’s willingness to help others.
-  - **Perceptions of corruption:** Measures how corrupt people perceive their
+  * **Perceptions of corruption:** Measures how corrupt people perceive their
     government and business sectors, influencing trust and societal well-being.
-  - **Positive affect:** Measure of laugh, enjoyment and doing interesting things.
-  - **Negative affect:** Measure of worry, sadness and anger.
+  * **Positive affect:** Measure of laugh, enjoyment and doing interesting things.
+  * **Negative affect:** Measure of worry, sadness and anger.
 * **Storage**: The dataset will be imported into a database for efficient
   querying and extraction during analysis.
