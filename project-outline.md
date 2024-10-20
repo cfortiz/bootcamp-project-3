@@ -60,3 +60,6 @@ Global happiness and well-being have become key indicators for measuring the qua
 	•	An easy-to-use dashboard where users can explore the data and customize their view to suit their specific interests.
 
 8. Data URL: https://worldhappiness.report/data/
+
+Making a map out of Streamlit
+	•	Streamlit is another Python framework for building data science web applications. You can use Python code to build the entire frontend, including buttons, sliders, and visualizations, without needing to know JavaScript, HTML, or CSS.
