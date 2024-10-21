@@ -1,4 +1,5 @@
-# -------------------------------------------------- libraries and dependencies -------------------------------------------------- #
+from functools import lru_cache as memoized
+
 import folium
 from folium.plugins import MarkerCluster
 import numpy as np
@@ -9,72 +10,119 @@ from pymongo import MongoClient
 import streamlit as st
 from streamlit_folium import st_folium
 
-# -------------------------------------------------- STREAMLIT PAGE LAYOUR -------------------------------------------------- #
-# st.set_page_config(layout='wide')
 
-# -------------------------------------------------- DEFINE: convert mongodb fig 2024 to pandas df and add country coordinates -------------------------------------------------- #
+MIN_YEAR_OPTION = 2014
+MAX_YEAR_OPTION = 2023
+DEFAULT_YEAR_RANGE = (2018, 2022)
+
+# Configure the streamlit page to use a wide layout
+st.set_page_config(layout='wide')
+
+
 def get_mongo_client():
+    """Connect to MongoDB using a pymongoMongoClient"""
     mongo = MongoClient('mongodb://localhost:27017/')
     return mongo
 
-# Fetch data from 'fig' collection
+
+def get_data_from_mongo(collection_name):
+    """Fetch all data from a collection in worldHappiness mongo db
+    
+    Args:
+        collection: String name of the collection
+    
+    Returns:
+        A list of all documents in the mongo worldHappiness db collection passed
+        as an argument.
+    
+    """
+    with get_mongo_client() as mongo:
+        mongo = get_mongo_client()
+        db = mongo.worldHappiness
+        collection = db[collection_name]
+        return list(collection.find({}, {'_id': 0}))
+
+
 def get_fig_data_from_mongodb():
-    mongo = get_mongo_client()
-    db = mongo['worldHappiness']
-    fig_collection = db['fig']
-    fig_data = list(fig_collection.find())
-    mongo.close()
-    return fig_data
+    """Fetch data from the mongo 'fig' collection"""
+    return get_data_from_mongo(collection_name='fig')
 
-# Fetch data from 'table' collection
+
 def get_table_data_from_mongodb():
-    mongo = get_mongo_client()
-    db = mongo['worldHappiness']
-    table_collection = db['table']
-    table_data = list(table_collection.find())
-    mongo.close()
-    return table_data
+    """Fetch data from the mongo 'table' collection"""
+    return get_data_from_mongo(collection_name='table')
 
-# Convert MongoDB fig data to pandas DataFrame
+
 def mongo_data_to_fig_df(fig_data):
+    """Convert MongoDB fig data to pandas DataFrame"""
     fig_df = pd.DataFrame(fig_data)
-    if '_id' in fig_df.columns:
-        fig_df = fig_df.drop('_id', axis=1)
     return fig_df
 
-# Convert MongoDB table data to pandas DataFrame
+
 def mongo_data_to_table_df(table_data):
+    """Convert MongoDB table data to pandas DataFrame"""
     table_df = pd.DataFrame(table_data)
-    if '_id' in table_df.columns:
-        table_df = table_df.drop('_id', axis=1)
     return table_df
 
-def load_country_coordinates(csv_file):
-    return pd.read_csv('back-end/country_coordinates.csv')
 
-# -------------------------------------------------- FETCH: STREAMLIT MAP -------------------------------------------------- #
+def load_country_coordinates(csv_file):
+    """Load country coordinates from CSV file"""
+    return pd.read_csv('back_end/resources/country_coordinates.csv')
+
+
+# Memoized for performance, since we only need to get year options once
+@memoized
+def get_year_options():
+    """Get the list of all year option values for streamlit controls
+
+    Returns:
+        A list with all year option values as strings in reverse chronological
+        order.
+
+    """
+    return list(map(str, reversed(range(MIN_YEAR_OPTION, MAX_YEAR_OPTION+1))))
+
+
+# Memoized for performance, since we only need to get country options once
+@memoized
+def get_country_options():
+    """Get the list of all country option values for streamlit controls
+
+    Returns:
+        A list of all country names as strings to be used as country option
+        values.
+
+    """
+    mongo = get_mongo_client()
+    db = mongo.worldHappiness
+    countries = set()
+    for collection_name in ('fig', 'table'):
+        collection = db[collection_name]
+        for result in collection.find({}, {'Country name': 1, '_id': 0}):
+            country = result['Country name']
+            countries.add(country)
+    return sorted(countries)
+
+
 def main():
-    # Title of Page
+    # Set page title, and add dashboard tabs
     st.title("World Happiness Dashboard")
-    # Tabs listed under the dashboard
-    tab1, tab2, tab3 = st.tabs(["2024 World Map", "Compare Countries by Year", "Data Tables"])
+    tab1, tab2 = st.tabs(["2024 World Map", "Compare Countries by Year"])
 
     # Filter options for year and country
-    year_options = ['2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014']
-    country_options = ['Afghanistan','Albania','Algeria','Angola','Argentina','Armenia','Australia','Austria','Azerbaijan',
-                       'Bahrain','Bangladesh','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Bulgaria','Burkina Faso','Burundi',
-                       'Cambodia','Cameroon','Canada','Central African Republic','Chad','Chile','China','Colombia','Comoros','Congo (Brazzaville)','Congo (Kinshasa)','Costa Rica','Croatia','Cuba','Cyprus','Czechia',
-                       'Denmark','Djibouti','Dominican Republic','Ecuador','Egypt','El Salvador','Estonia','Eswatini','Ethiopia',
-                       'Finland','France','Gabon','Gambia',	'Georgia','Germany','Ghana','Greece','Guatemala','Guinea','Guyana',
-                       'Haiti','Honduras','Hong Kong S.A.R. of China','Hungary','Iceland','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy','Ivory Coast',
-                       'Jamaica','Japan','Jordan','Kazakhstan','Kenya','Kosovo','Kuwait','Kyrgyzstan','Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Lithuania','Luxembourg',
-                       'Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Mauritania','Mauritius','Mexico','Moldova','Mongolia','Montenegro','Morocco','Mozambique','Myanmar',
-                       'Namibia','Nepal','Netherlands','New Zealand','Nicaragua','Niger','Nigeria','North Macedonia','Norway','Oman',
-                       'Pakistan','Panama','Paraguay','Peru','Philippines','Poland','Portugal','Qatar','Romania','Russia','Rwanda',
-                       'Saudi Arabia','Senegal','Serbia','Sierra Leone','Singapore','Slovakia','Slovenia','Somalia','Somaliland region','South Africa','South Korea','South Sudan','Spain','Sri Lanka','State of Palestine','Sudan','Suriname','Sweden','Switzerland','Syria',
-                       'Taiwan Province of China','Tajikistan','Tanzania','Thailand','Togo','Trinidad and Tobago','Tunisia','Turkmenistan','Türkiye',
-                       'Uganda','Ukraine','United Arab Emirates','United Kingdom','United States','Uruguay','Uzbekistan','Venezuela','Vietnam','Yemen','Zambia','Zimbabwe']
-
+    year_options = get_year_options()
+    country_options = get_country_options()
+    metric_options = [  # Hard-coded variable options
+        'Life Ladder',
+        'Log GDP per capita',
+        'Social support',
+        'Healthy life expectancy at birth',
+        'Freedom to make life choices',
+        'Generosity',
+        'Perceptions of corruption',
+        'Positive affect',
+        'Negative affect',
+    ]
 
     # Fetch data from both collections
     fig_data = get_fig_data_from_mongodb()
@@ -84,35 +132,36 @@ def main():
     if fig_data and table_data:
         fig_df = mongo_data_to_fig_df(fig_data)
         table_df = mongo_data_to_table_df(table_data)
+
         # Load coordinates csv into a DataFrame and merge with the fig_df to create the 2024 Map
-        coordinates_df = load_country_coordinates('back-end/country_coordinates.csv')
+        coordinates_df = load_country_coordinates('back_end/resources/country_coordinates.csv')
         merged_fig_df = pd.merge(fig_df, coordinates_df, on='Country name', how='left')
 
-# -------------------------------------------------- TAB 1: WORLD MAP (map does not change based on filtered data)  -------------------------------------------------- #
+    # Streamlit tab 1: World Happiness Map for year 2024
+    # Note: map does not update in realtime based on filtered data
     with tab1:
-        
         # Dropdown to select country
         country_selection = st.selectbox("Select a country to see 2024 metrics:", country_options)
+
         # Filter data for the selected country
         country_fig_data = merged_fig_df[merged_fig_df['Country name'] == country_selection]
         st.header(f'2024 {country_selection} Metrics')
 
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
 
         if not country_fig_data.empty:
             # Display country-specific data
-            
             col1.metric("Happiness Score", round(country_fig_data['Ladder score'].values[0], 2))
             col1.metric('Log GDP per Capita', round(country_fig_data['Explained by: Log GDP per capita'].values[0], 2))
-            col1.metric('Healthy Life Expectancy', round(country_fig_data['Explained by: Healthy life expectancy'].values[0], 2))
+            col2.metric('Healthy Life Expectancy', round(country_fig_data['Explained by: Healthy life expectancy'].values[0], 2))
             col2.metric('Freedom to make Life Choices', round(country_fig_data['Explained by: Freedom to make life choices'].values[0], 2))
-            col2.metric('Generosity', round(country_fig_data['Explained by: Generosity'].values[0], 2))
-            col2.metric('Perceptions of Corruption', round(country_fig_data['Explained by: Perceptions of corruption'].values[0], 2))  
-        fig_map = folium.Map(location=[20,0], zoom_start=4)
+            col3.metric('Generosity', round(country_fig_data['Explained by: Generosity'].values[0], 2))
+            col3.metric('Perceptions of Corruption', round(country_fig_data['Explained by: Perceptions of corruption'].values[0], 2))
+        fig_map = folium.Map(location=[20,0], zoom_start=2)
 
         # Choropleth Layer
         folium.Choropleth(
-            geo_data='back-end/countries.geo.json',
+            geo_data='back_end/resources/countries.geo.json',
             name='choropleth',
             data=merged_fig_df,
             columns=['Country name', 'Ladder score'],
@@ -124,7 +173,7 @@ def main():
         ).add_to(fig_map)
 
         # Marker Cluster Layer
-        marker_cluster = MarkerCluster().add_to(fig_map)        
+        marker_cluster = MarkerCluster().add_to(fig_map)
         for _, row in merged_fig_df.iterrows():
             if pd.notnull(row['latitude']) and pd.notnull(row['longitude']):
                 folium.Marker(
@@ -134,23 +183,51 @@ def main():
                 ).add_to(marker_cluster)
 
         # Display Folium map in Streamlit
-        st_folium(fig_map, width=800, height=500)       
+        st_folium(fig_map, width=1000, height=500)
 
-# -------------------------------------------------- TAB 2: COMPARING COUNTRIES  -------------------------------------------------- #
-        with tab2:
-            col1, col2 = st.columns(2)
-
+    # Streamlit tab 2: Comparing Countries
     with tab2:
-        
         # Dropdown to select year
-        country_selection
-        year_selection = st.selectbox("Select a year to compare metrics:", year_options)
-        
+        # country_selection
+        metric_selection = st.selectbox(
+            "Select a metric to see year to year:",
+            metric_options
+        )
+        year_selection = st.slider(
+            "Select a range of years:",
+            MIN_YEAR_OPTION, MAX_YEAR_OPTION,
+            DEFAULT_YEAR_RANGE
+        )
+        st.write("Year Range:", year_selection)
 
+        # Filter data based on Country, Metric, Year Range selection
+        filtered_table_df = table_df[
+            (table_df['Country name'] == country_selection) &
+            (table_df['year'] >= year_selection[0]) &
+            (table_df['year'] <= year_selection[1])
+        ]
 
+        # Create Line Chart
+        if not filtered_table_df.empty:
+            fig = px.line(
+                filtered_table_df,
+                x='year',
+                y=metric_selection,
+                title=f'{metric_selection} over time for {country_selection}'
+            )
+
+            # Update layout
+            fig.update_layout(
+                xaxis=dict(
+                    tickmode='linear',
+                    tick0=filtered_table_df['year'].min(),
+                    dtick=1,
+                )
+            )
+
+            # Display the line chart in Streamlit
+            st.plotly_chart(fig)
 
 
 if __name__ == "__main__":
         main()
-
-

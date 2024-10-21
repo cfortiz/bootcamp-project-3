@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Happiness Index Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #map {
+            height: 600px;
+            width: 60%;
+            border: 1px solid #ccc;
+            position: relative;
+        }
+        #controls {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 5px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+        #controls i {
+            margin-right: 5px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .legend {
+            position: absolute;
+            bottom: 40px;
+            left: 10px;
+            z-index: 1000;
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">World Happiness Index (2008-2023)</h1>
+    <div id="map">
+        <div class="legend" id="legend">Year: 2008</div>
+        <div id="controls">
+            <i id="playButton" class="fas fa-play"></i>
+            <i id="stopButton" class="fas fa-stop" style="display: none;"></i>
+        </div>
+    </div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="static/js/time_series_map.js"></script>
+</body>
+</html>
