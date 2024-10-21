@@ -17,7 +17,7 @@ async function loadGeoJSON() {
 
 // Fetch happiness data from JSON
 async function fetchData() {
-    const response = await fetch('samples.json');
+    const response = await fetch('worldHappiness.table.json');
     if (!response.ok) {
         console.error('Failed to load samples.json:', response.status);
         return;
