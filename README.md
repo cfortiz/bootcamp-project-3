@@ -182,11 +182,13 @@ process.
   provided by the World Happiness Report which documents each variable in the
   dataset.
 * `resources/world-happiness-fig-2024.csv`: 2024 World Happiness Report data
-  (for year 2023) as a CSV file.  Comes straight from the World Happiness Report
-  site.
+  (for year 2023) as a CSV file.  Converted to CSV from
+  [World Happiness Report 2024 - Data for Figure 2.1](https://happiness-report.s3.amazonaws.com/2024/DataForFigure2.1+with+sub+bars+2024.xls)
+  excel file.
 * `resources/world-happiness-table-2024.csv`: 2024 World Happiness Report data
-  (for years 2005 - 2023) as a CSV file.  Comes straight from the World
-  Happiness Report site.
+  (for years 2005 - 2023) as a CSV file.  Converted to CSV from
+  [World Happiness Report 2024 - Data for Table 2.1](https://happiness-report.s3.amazonaws.com/2024/DataForTable2.1.xls)
+  excel file.
 
 ## Visualizations
 
