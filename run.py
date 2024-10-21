@@ -1,9 +1,8 @@
 import logging
 import multiprocessing
 import os
-import socket
 import subprocess
-
+import time
 
 BACK_END_DIR = 'back_end'
 BACK_END_PORT = 5000
@@ -16,7 +15,7 @@ logger = logging.getLogger()
 def run_back_end():
     """Run the back-end flask service"""
     os.chdir(BACK_END_DIR)
-    subprocess.run(['python', 'service.py', '--port', BACK_END_PORT])
+    subprocess.run(['python', 'service.py', '--port', str(BACK_END_PORT)])
 
 
 def run_front_end():
