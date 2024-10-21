@@ -67,7 +67,7 @@ def mongo_data_to_table_df(table_data):
 
 def load_country_coordinates(csv_file):
     """Load country coordinates from CSV file"""
-    return pd.read_csv('back-end/resources/country_coordinates.csv')
+    return pd.read_csv('back_end/resources/country_coordinates.csv')
 
 
 # Memoized for performance, since we only need to get year options once
@@ -112,7 +112,7 @@ def main():
     # Filter options for year and country
     year_options = get_year_options()
     country_options = get_country_options()
-    metric_options = [
+    metric_options = [  # Hard-coded variable options
         'Life Ladder',
         'Log GDP per capita',
         'Social support',
@@ -134,7 +134,7 @@ def main():
         table_df = mongo_data_to_table_df(table_data)
 
         # Load coordinates csv into a DataFrame and merge with the fig_df to create the 2024 Map
-        coordinates_df = load_country_coordinates('back-end/resources/country_coordinates.csv')
+        coordinates_df = load_country_coordinates('back_end/resources/country_coordinates.csv')
         merged_fig_df = pd.merge(fig_df, coordinates_df, on='Country name', how='left')
 
     # Streamlit tab 1: World Happiness Map for year 2024
@@ -161,7 +161,7 @@ def main():
 
         # Choropleth Layer
         folium.Choropleth(
-            geo_data='back-end/resources/countries.geo.json',
+            geo_data='back_end/resources/countries.geo.json',
             name='choropleth',
             data=merged_fig_df,
             columns=['Country name', 'Ladder score'],
