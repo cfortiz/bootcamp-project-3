@@ -119,6 +119,9 @@ To run the leaflet code, change directory to `front_end` and run
 * [Javascript Mapping](http://localhost:8000/javascript_mapping.html)
 * [Time Series Map](http://localhost:8000/time_series_map.html)
 
+Press CTRL-C on the console (might require repeated pressing) to stop the
+python http server.
+
 ### Streamlit
 
 To run the Streamlit dashboard, first run the following from the project's root
