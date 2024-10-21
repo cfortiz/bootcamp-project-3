@@ -5,8 +5,8 @@ from pymongo import MongoClient
 DB_NAME = 'worldHappiness'
 FIG_COLLECTION_NAME = 'fig'
 TABLE_COLLECTION_NAME = 'table'
-FIG_DATA_FILENAME = 'resources/world-happiness-fig-2024.csv'
-TABLE_DATA_FILENAME = 'resources/world-happiness-table-2024.csv'
+FIG_DATA_FILENAME = 'back_end/resources/world-happiness-fig-2024.csv'
+TABLE_DATA_FILENAME = 'back_end/resources/world-happiness-table-2024.csv'
 
 mongo = MongoClient(port=27017)
 
