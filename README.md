@@ -12,7 +12,7 @@ Understanding Global Happiness
 
 ## Track
 
-For this project, we have selected the Data Visualization track.
+This project falls along the Data Visualization track for Project 3.
 
 ## Objective
 
@@ -41,62 +41,152 @@ choices, generosity, and perceptions of corruption.
 
 ## Dataset Overview
 
-* **Dataset Source**: [World Happiness Report Appendices & Data](https://worldhappiness.report/data/)
-* **Content**: The dataset contains mre than 2500 records, with the following
-  variables providing a comprehensive view of happiness level:
-  * **Life Ladder:** A subjective measure where individuals rate
-    their current lives on a scale from 0 to 10, reflecting personal
-    life satisfaction and well-being
-  * **GDP per capita:** Measures the average income per capita,
-    reflecting the economic resources available to individuals.
-  * **Social support:** Assesses the presence of supportive relationships
-    and community ties that individuals can rely on in times of need. 
-  * **Healthy life expectancy at birth:** Indicates the average number
-    of years people can expect to live in good health, reflecting overall
-    health and healthcare quality.
-  * **Freedom to make life choices:** Evaluates the extent to which individuals
-    feel they have the autonomy to make choices about their own lives.
-  * **Generosity:** Looks at the level of charitable donations and volunteerism,
-    reflecting a society’s willingness to help others.
-  * **Perceptions of corruption:** Measures how corrupt people perceive their
-    government and business sectors, influencing trust and societal well-being.
-  * **Positive affect:** Measure of laugh, enjoyment and doing interesting things.
-  * **Negative affect:** Measure of worry, sadness and anger.
+Attribution: This project uses data from the
+[World Happiness Report Appendices & Data](https://worldhappiness.report/data/).
 
-* **Storage**: The dataset will be imported into a database for efficient
-  querying and extraction during analysis.
+Please see provided documentation PDF for data spec.
+
+The dataset contains mre than 2500 records, with the following variables
+providing a comprehensive view of happiness level:
+
+* **Life Ladder:** A subjective measure where individuals rate
+  their current lives on a scale from 0 to 10, reflecting personal
+  life satisfaction and well-being.
+* **GDP per capita:** Measures the average income per capita,
+  reflecting the economic resources available to individuals.
+* **Social support:** Assesses the presence of supportive relationships
+  and community ties that individuals can rely on in times of need. 
+* **Healthy life expectancy at birth:** Indicates the average number
+  of years people can expect to live in good health, reflecting overall
+  health and healthcare quality.
+* **Freedom to make life choices:** Evaluates the extent to which individuals
+  feel they have the autonomy to make choices about their own lives.
+* **Generosity:** Looks at the level of charitable donations and volunteerism,
+  reflecting a society’s willingness to help others.
+* **Perceptions of corruption:** Measures how corrupt people perceive their
+  government and business sectors, influencing trust and societal well-being.
+* **Positive affect:** Measure of laugh, enjoyment, and doing interesting things.
+* **Negative affect:** Measure of worry, sadness, and anger.
+
+## Prerequisites
+
+This project requires MongoDB as well as several python libraries.
+
+### Services
+
+* MongoDB running on port 27017
+
+### Python libraries
+
+The following python libraries must be installed via either `pip install` or
+`conda install`:
+
+* Jupyter notebooks/lab: `jupyter`
+* PyMongo: `pymongo`
+* Folium: `folium`
+* Numpy: `numpy`
+* Pandas: `pandas`
+* Plotly: `plotly`
+* Streamlit: `streamlit`
+* Folium: `folium`
+* Steamlit-Folium plugin: `streamlit-folium`
+
+### Data
+
+The mongo database must be imported after MongoDB has been installed, is running
+on port 27017, and all python libraries are installed: particularly pymongo.
+
+To import the data, activate your python environment with the prerequisite
+libraries, and run the following command from the project's root directory:
+
+`python importdata.py`
+
+This should create a mongo database called 'worldHappiness' with the collections
+'fig' and 'table'.
+
+## Running
+
+There are 4 visualizations in this project: 2 html/css/js visualizations using
+Leaflet, 1 jupyter notebook, and 1 streamlit interactive visualization.  Please
+mare sure all project pre-requisites have been fulfilled before you run these
+visualizations to prevent errors.
+
+### Leaflet
+
+To run the leaflet code, change directory to `front_end` and run
+`python -m http.server`.  Then access either of the links on your browser:
+
+* [Javascript Mapping](http://localhost:8000/javascript_mapping.html)
+* [Time Series Map](http://localhost:8000/time_series_map.html)
+
+### Streamlit
+
+To run the Streamlit dashboard, first run the following from the project's root
+directory:
+
+`streamlit run world-happiness-map.py`
+
+This should open a browser window or tab accessing the dashboard.  If not,
+please follow the instructions given by the command's output to access the
+dashboard.
+
+Press CTRL-C on the console (might require repeated pressing) to stop the
+streamlit application.
+
+### Jupyter Notebook
+
+To run the statistical analysis jupyter notebook, you may run either
+`jupyter notebook` or `jupyter lab` from the project's root directory.  This
+should open a browser interface from which you can open
+'statistical_analysis.ipynb' to review the notebook.
 
 ## Files
+
+### Primary files
+
+* `front_end/javascript_mapping.html`: Javascript Mapping HTML visualization
+  file.
+* `front_end/static/js/javascript_mapping.js`: Static JS code for the Javascript
+  Mapping visualization.
+* `front_end/time_series_map.html`: Time Series Map HTML visualization file.
+* `front_end/static/css/style.css`: Static CSS stylesheet used for Javascript
+  Mapping visualization.
+* `front_end/static/js/time_series_map.js`: Static JS code for the Time Series
+  Map visualization.
+* `statistical_analysis.ipynb`: Jupyter Notebook with statistical analysis
+  visualizations.
+* `world-happiness-map.py`: Streamlit interactive visualization script.
+* `Project 3 Presentation.pptx`: Powerpoint presentation file used for the
+  presentation on 2024-10-24 during class.
+* `project-outline.md`: Markdown outline of the project we used to prepare for
+  our work.
+* `README.md`: This file.
+
+### Secondary files
 
 * `back_end/resources/countries.geo.json`: GeoJSON file of country boundaries
   for maps.
 * `back_end/resources/country_coordinates.csv`: Latitude and longitude
   coordinates for each country as a CSV file.
+* `front_end/worldHappiness.table.json`: MongoDB dump of the WHR table data (
+  time series data).
+
+### Data source files
+
+The following files were obtained from the
+[World Happiness Report](https://worldhappiness.report/) site.  Excel files
+obtained from that site were converted to CSV to simplify the data import
+process.
+
 * `docs/World Happiness Report 2024 - Appendix.pdf`: This is the documentation
   provided by the World Happiness Report which documents each variable in the
   dataset.
-* `front_end/javascript_mapping.html`: Javascript Mapping HTML visualization
-  file.
-* `front_end/time_series_map.html`: Time Series Map HTML visualization file.
-* `front_end/worldHappiness.table.json`: MongoDB dump of the WHR table data (
-  time series data).
-* `front_end/static/css/style.css`: Static CSS stylesheet used for Javascript
-  Mapping visualization.
-* `front_end/static/js/javascript_mapping.js`: Static JS code for the Javascript
-  Mapping visualization.
-* `front_end/static/js/time_series_map.js`: Static JS code for the Time Series
-  Map visualization.
 * `resources/world-happiness-fig-2024.csv`: 2024 World Happiness Report data
   (for year 2023) as a CSV file.  Comes straight from the World Happiness Report
   site.
 * `resources/world-happiness-table-2024.csv`: 2024 World Happiness Report data
   (for years 2005 - 2023) as a CSV file.  Comes straight from the World
   Happiness Report site.
-* `Project 3 Presentation.pptx`: Powerpoint presentation file used for the
-  presentation on 2024-10-24 during class.
-* `Statistical_Analysis.ipynb`: Jupyter Notebook with statistical analysis
-  visualizations.
-* `world-happiness-map.py`: Streamlit interactive visualization script.
 
 ## Visualizations
 
