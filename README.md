@@ -148,9 +148,9 @@ should open a browser interface from which you can open
   file.
 * `front_end/static/js/javascript_mapping.js`: Static JS code for the Javascript
   Mapping visualization.
-* `front_end/time_series_map.html`: Time Series Map HTML visualization file.
 * `front_end/static/css/style.css`: Static CSS stylesheet used for Javascript
   Mapping visualization.
+* `front_end/time_series_map.html`: Time Series Map HTML visualization file.
 * `front_end/static/js/time_series_map.js`: Static JS code for the Time Series
   Map visualization.
 * `statistical_analysis.ipynb`: Jupyter Notebook with statistical analysis
