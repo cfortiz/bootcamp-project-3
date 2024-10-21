@@ -17,11 +17,7 @@ app.json.sort_keys = FLASK_JSON_SORT_KEYS
 
 @app.route('/api/country')
 def get_countries():
-    """Get a list of countries.
-    
-    Returns:
-        A flask response with a list of countries as a flask response containing
-        json for th
+    """Get a list of countries."""
     data = get_country_locations_from_csv()
     if data:
         return jsonify(sorted(data.keys()))
@@ -31,19 +27,7 @@ def get_countries():
 
 @app.route('/api/country/<country>/location')
 def get_country_location(country):
-    """Get location of a country as lat/lon coordinates
-    
-    Gets a data structure with the coordinates for each country, and returns the
-    coordinates of the given country as a GeoJSON object with a Point geometry.
-    
-    Args:
-        country_name (str): Name of the country
-    
-    Returns:
-        A flask response containing the country and its location as a GeoJSON
-        object.
-    
-    """
+    """Get location of a country"""
     try:
         locations = get_country_locations_from_csv()
         location = locations.get(country, None)
@@ -66,25 +50,7 @@ def get_country_location(country):
 
 @memoized  # Memoize this so the CSV is only read once
 def get_country_locations_from_csv():
-    """Get country locations from a CSV file
-    
-    Returns:
-        A dict mapping country name to a dict with country name, latitude, and
-        longitude, for example:
-        
-        {
-            "United States": {
-                "country": {
-                    "name": "United States"
-                },
-                "location": {
-                    "latitude": 37.0902,
-                    "longitude": -95.7129
-                }                
-            }
-        }
-    
-    """
+    """Get country locations from a CSV file"""
     csv_filename = 'resources/country-coordinates.csv'
     csv_fields = ('Country name', 'latitude', 'longitude')
 
